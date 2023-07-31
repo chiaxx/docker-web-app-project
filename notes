@@ -1,0 +1,56 @@
+# configure aws cli and create a programmatic user
+
+aws ecr create-repository --repository-name <enter-repository-name-here> --region us-east-1
+
+```
+$ aws ecr create-repository --repository-name jupiter --region us-east-1
+{
+    "repository": {
+        "repositoryArn": "arn:aws:ecr:us-east-1:651067963245:repository/jupiter",
+        "registryId": "651067963245",
+        "repositoryName": "jupiter",
+        "repositoryUri": "651067963245.dkr.ecr.us-east-1.amazonaws.com/jupiter",
+        "createdAt": "2023-07-30T23:21:37-06:00",
+        "imageTagMutability": "MUTABLE",
+        "imageScanningConfiguration": {
+            "scanOnPush": false
+        },
+        "encryptionConfiguration": {
+            "encryptionType": "AES256"
+        }
+    }
+}
+
+```
+2. next step
+docker tag <name of your image> uri of your repo in aws 
+$ docker tag jupiter:v1 651067963245.dkr.ecr.us-east-1.amazonaws.com/jupiter
+==============================================================================
+aws ecr get-login-password |  docker login --username AWS --password-stdin <aws_account_id>.dkr.ecr.<region>.amazonaws.com
+aws ecr get-login-password | docker login --username AWS --password-stdin  651067963245.dkr.ecr.us-east-1.amazonaws.com
+
+docker push <uri of repo>
+
+3. the security group for this project
+  1. ALB
+  2. Container SG
+     - port = 80 and 443           Source = ALB SG
+
+4. Create ALB
+5. Create an ECS Cluster to run our ec2 fargate container
+Create Cluster 
+- name : jupiter
+- vpc: dev-vpc
+- subnet: private app subnet az1 and az2
+6. Create the Task definition
+ECS > Task definition > Create new Task
+name: jupiterTD
+container anme: jupiter
+image uri: copy and paste uri[go to ECR]
+container port : 80 and tcp
+Environment: aws fargate is checked
+OS: Linux /x86_64
+CPU: .25 v memory.5GB > NEXT > REVIEW > CREATE
+
+
+
