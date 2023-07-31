@@ -37,6 +37,7 @@ docker push <uri of repo>
      - port = 80 and 443           Source = ALB SG
 
 4. Create ALB
+- we delete the target group lolz
 5. Create an ECS Cluster to run our ec2 fargate container
 Create Cluster 
 - name : jupiter
@@ -51,6 +52,20 @@ container port : 80 and tcp
 Environment: aws fargate is checked
 OS: Linux /x86_64
 CPU: .25 v memory.5GB > NEXT > REVIEW > CREATE
+
+7. Create a ECS Service [How we start our container]
+ECS > Clusters > Select your cluster [jupiter]
+- Services > Deploy
+  - app type: service
+  - task defintion: family[jupiterTD]
+  - service name: jupiter-service
+  - desired task: 2 [we want two container running]
+  - load balancing > ALB > Use an exisiting LB > Select your ALB[dev-ALB]
+  - target group: dev-TG protocol: HTTP
+  - networking: dev-vpc, subnet[private app subnet AZ1 and AZ2], sg: containerSG, disable public IP > DEPLOY
+
+
+
 
 
 
